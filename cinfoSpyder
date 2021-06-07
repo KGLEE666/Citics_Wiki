@@ -5,7 +5,7 @@ import json
 import pandas as pd
 
 download_path = 'http://static.cninfo.com.cn/'
-saving_path = 'xxxx/2020年报'
+saving_path = 'xxx/2020年报'
 
 User_Agent = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0",
@@ -77,10 +77,6 @@ def single_page(page,stock):
              }
     namelist = requests.post(query_path, headers=headers, data=query)
     time.sleep(5)
-    # txt = namelist.text.replace(' ','')
-    # txt = txt.replace('\n', '').replace('\r', '').replace("\t", "")
-    # j = json.loads(txt)
-    # single_page = j['announcements']
     single_page = namelist.json()['announcements']
     print(len(single_page))
     return single_page  # json中的年度报告信息
@@ -100,11 +96,10 @@ def saving(single_page):  # 下载年报
         if ('2020年年度报告（更新后）' in i['announcementTitle'])  or ('2020年年度报告' in i['announcementTitle']) or ('2020年年度报告（修订版）' in i['announcementTitle']) :
             download = download_path + i["adjunctUrl"]
             name = i["secCode"] + '_' + i['secName'] + '_' + i['announcementTitle'] + '.pdf'
-            #print(download)
             file_path = saving_path + '/' + name
             print(file_path)
             time.sleep(random.random() * 2)
-            #headers['User-Agent'] = random.choice(User_Agent)
+            headers['User-Agent'] = random.choice(User_Agent)
             r = requests.get(download, headers=headers)
             time.sleep(15)
             print(r.status_code)
@@ -121,14 +116,13 @@ if __name__ == '__main__':
     Namelist = list(Sec['name'])
     org_list = get_orgid(Namelist)
     Sec['orgid'] = org_list
-    Sec.to_excel('C:/Users/zikan/Desktop/dict.xlsx',sheet_name='sheet-2')
-    #print(Sec)
+    Sec.to_excel('XXX/dict.xlsx',sheet_name='sheet-2',index=False) #index参数不保存索引
     stock = ''
     ##按行遍历
     for rows in Sec.iterrows():
         t = str(rows[1]['code'])+','+str(rows[1]['orgid'])+';'
         stock = stock+t
-    #print('stock:'+stock)
+
     for p in range(4):
         page = p+1
         try:
